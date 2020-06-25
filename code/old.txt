@@ -1,0 +1,202 @@
+
+
+
+
+#%%
+
+### Plotting
+colors = ['#fee5d9', '#fcae91', '#fb6a4a', '#cb181d']
+
+cmap = matplotlib.colors.LinearSegmentedColormap.from_list(name="new cmap", 
+                                                            colors=colors, 
+                                                            N=10)
+
+fig, ax = plt.subplots(figsize=(8,8))
+# cax = fig.add_axes([0.27, 0.8, 0.5, 0.05])
+with rasterio.open(rast_2018[0]) as src:
+    tif = src.read(1)
+    tif[np.where(tif<0)] = 0
+
+    bins = [0, 0.25, 1, 10, np.round(np.nanmax(tif))]
+
+
+    tif_reclass = np.copy(tif)
+    tif_reclass[np.where(np.isnan(tif_reclass))] = -1
+    tif_reclass[np.where( (tif_reclass>bins[3]) )] = 4
+    tif_reclass[np.where( (tif_reclass>bins[2]) & (tif_reclass<=bins[3]) )] = 3
+    tif_reclass[np.where( (tif_reclass>bins[1]) & (tif_reclass<=bins[2]) )] = 2
+    tif_reclass[np.where( (tif_reclass> bins[0]) & (tif_reclass<=bins[1]) )] = 1
+
+    tif_masked = np.ma.masked_where(tif_reclass == -1, tif_reclass, copy=True)
+    plot = ax.imshow(tif_masked, cmap=cmap)
+    patches = [ mpatches.Patch(color=colors[i], 
+                                label= "{l} - {j}".format(l=str(round(bins[i],2)), 
+                                j= str(round(bins[i+1],2))) ) for i in range(len(bins)-1) ]
+    
+    ax.legend(handles=patches, bbox_to_anchor=(0.8, 0.25), loc=2, frameon=False,
+                title='Nightlight Quantiles')
+    ax.axis('off')
+
+fig.suptitle(f'Nightlight {year}', fontsize=12, x=0.15, y=0.95)
+fig.text(0.2 , 0.2, 'Extracted from VIIRS DNB dataset', ha='left')
+
+#%%
+
+#%%
+# Since we will have different histograms for each image
+# we will use find each 10, 25, 50, 75 percentile of each image
+
+def quantiles(array):
+    percentiles = []
+    for raster in array:
+        with rasterio.open(raster) as src:
+            # removing background values (<0)
+            tif = src.read(1)
+            tif[tif<0] = 0
+
+            q25 = np.nanpercentile(tif, q=25)
+            q50 = np.nanpercentile(tif, q=50)
+            q75 = np.nanpercentile(tif, q=75)
+            max_ = np.nanmax(tif)
+            mean_ = np.nanmean(tif)
+            std = np.nanstd(tif)
+
+            percentiles.append([q25, q50, q75, max_, mean_, std])
+    return percentiles
+
+# Creating a dataframe for percentiles
+percents = []
+for year in [rast_2018, rast_2019, rast_2020]:
+    year_percents = ( quantiles(year) )
+    rst = pd.DataFrame(year_percents, index=months, 
+                        columns=['p25', 'p50', 'p75', 'max', 'mean_', 'std'])
+    percents.append(rst)
+
+result = pd.concat(percents)
+
+# Selecting mean of them to split our data into classes
+percentiles_mean = result.mean().round(decimals=2).to_list()
+percentiles_mean.insert(0, 0)
+percentiles_mean.insert(4, 1)
+percentiles_mean.append(np.nan)
+# percentiles_mean.extend([1, 10, np.nan])
+percentiles_mean 
+
+
+
+
+
+# x, y = np.mgrid[1:2, 1:10:0.01]
+# plt.figure(figsize=[15, 1])
+# plt.imshow(y, cmap=cmap, aspect='auto')
+# plt.axis('off')
+# plt.show()
+        
+
+'''
+        # removing background values (<0)
+        tif = src.read(1, masked=True)
+        tif[np.where(tif<0)] = 0
+        # tif = np.ma.masked_array(tif, mask=(tif==np.nan))
+        
+        # Removing nans to compute quantiles
+        tif_nan = tif[~np.isnan(tif)]
+
+        # Finding quantiles
+        quantile = np.quantile(tif_nan, q=[0.25, 0.5, 0.75])
+
+        # Reclassifying raster
+        tif_class = np.digitize(tif, quantile, right=True)
+
+        # Masking nan values
+        tif_class = np.ma.masked_where(tif_class == 0, tif_class, copy=True)
+        img = ax.imshow(tif_class, cmap=cmap)
+        # rasterio.plot.show(tif_class, vmin=0, cmap='inferno', ax=ax)
+        break
+        # ax.axis('off')
+        # # ax.set_titles()
+
+
+        # # Creating dataset splitted
+        # new = np.ma.masked_where(test == 0, test, copy=True)
+        # print(new)
+'''
+#%%
+    # for idx, row in shp[['ESTADO', 'geometry']].iterrows():
+
+    #     info = rasterstats.zonal_stats(shp, img, affine=affine, 
+    #         stats=['min', 'max', 'mean', 'median', 'majority', 'minority' ],
+    #         add_stats={'variance': func_variance})
+
+
+    #     # zonalstats2.append([{'group': group}, {'date': date} , info])
+    #     zonalstats2.append([{'group': group},  info])
+
+    # # Exporting geodataframe
+    # out_name = path[:-4] + f'_{group}_{method}_' 'dissolve.shp'
+    # dissolve.to_file(out_name)
+
+
+
+
+
+    #     # Plotting
+    #     fig, ax = plt.subplots(figsize=(8,8))
+    #     rasterio.plot.show(tif, ax=ax, vmin=0, vmax=1, cmap='inferno')
+    #     shp.plot(ax=ax, facecolor='none', edgecolor='red')
+        # ax.axis('off')
+
+
+
+
+#folium.LayerControl().add_to(basemap)
+#https://nbviewer.jupyter.org/github/ocefpaf/folium_notebooks/blob/master/test_image_overlay_gulf_stream.ipynb
+
+# %%
+#info: https://stackoverflow.com/questions/41449084/shapelys-scale-function-in-geopandas-returns-points-of-similar-magnitude
+# info: https://stackoverflow.com/questions/47680573/make-geopandas-dataframe-plot-on-top-a-raster-plot-fit-correctly
+
+
+#%%
+basemap = folium.Map(location=[-14, -53], 
+                    zoom_start=3)
+
+# Because folium dont work with UTM we will transform it
+shp2 = shapefile
+shp2 = shp2.to_crs(epsg=4326)
+bounds = list(shp2.total_bounds)
+print(bounds)
+
+folium.raster_layers.ImageOverlay(
+    image = raster, opacity=0.6, 
+    bounds=[ [bounds[:2]], bounds[3:]],
+    origin='lower').add_to(basemap)
+basemap
+
+#%%
+'''
+#### Clipping rasters 
+for rast in rasters:
+    new_raster = Raster_operations(rast, path_shp)
+    new_raster.clip_raster_by_shp()
+
+# VIIRS Nighttime registra a radiancia, entao
+# o ideal vai ser transformar (colocar numa escala)
+# ou em outro valor
+
+preciso fazer um colormap segmentado
+ou seja, dividir a array em 5 a 8 partes e plotar isso usando um colormap
+acho que é só dividir a array em x partes e criar um colormap por cores
+criadas (Tipo o exemplo que eu fiz pro resto)
+'''
+# download populacao, pib per capita, nao sei mais o que
+# fazer a media anual e substituir valores superiores a media anual por ela
+# http://www.dados.gov.br/dataset?tags=INDE&page=3
+
+# year_2018 = pd.concat([pd.DataFrame(y, index=estados) for y in year2018], axis=1, keys=months)
+#https://stackoverflow.com/questions/18470323/selecting-columns-from-pandas-multiindex
+# Multindexing:https://stackoverflow.com/questions/53927460/select-rows-in-pandas-multiindex-dataframe
+
+# colors = ['#edf8fb', '#b3cde3', '#8c96c6', '#88419d']
+# colors = ['#3f2949', '#644970', '#77324c', '#a77688', '#cabed0', 'black']
+# colors = ['#121212', '#353138', '#544361', '#76419e', '#872ec9', '#8700eb']
