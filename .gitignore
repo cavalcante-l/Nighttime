@@ -1,0 +1,12 @@
+# Ignore this files:
+
+D:\\Programming\\Nighttime\\code\\test.html
+D:\\Programming\\Nighttime\\code\\old.txt
+D:\\Programming\\Nighttime\\code\\problem.ipynb
+D:\\Programming\\Nighttime\\code\\crs_problem.ipynb
+D:\\Programming\\Nighttime\\code\\module_func_rast.py
+
+# Ignore this folders:
+D:\\Programming\\Nighttime\\Material\\
+D:\\Programming\\Nighttime\\images\\original\\
+D:\\Programming\\Nighttime\\code\\__pycache__\\
