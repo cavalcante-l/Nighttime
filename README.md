@@ -8,10 +8,10 @@ This is my initial project to investigate **Brazilian Nighttime**. Here, I used 
 
 "The VIIRS DNB's ultra-sensitivity in lowlight conditions enable us to generate a new set of science-quality nighttime products that manifest substantial improvements in sensor resolution and calibration when compared to the previous era of Defense Meteorological Satellite Program/Operational Linescan System’s (DMSP/OLS) nighttime lights image products."
 
-*Info extracted from NASA LAADS site*.
+[Info extracted from NASA LAADS site](https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/viirs/).
 
 ## Motivation :earth_americas: :satellite:
-Nightime brightness has many interesting applications (government defense, climatology, social studies), one of them, measures a country's development by nighttime brightness. However, that is a lack of studies using this data to analyze Brazil. So, here I will start how can we extract basic information from it and correlate with another Brazilian dataset (as Brazilian Institue of Geography and Statistics, IBGE, or Institute for Applied Economic Research, IPEA).
+Nightime brightness has many interesting applications (government defense, climatology, social studies), one of them, measures a country's development by nighttime brightness. However, that is a lack of studies using this data to analyze Brazil. So, here I will start how can we extract basic information from it and correlate with another Brazilian dataset (as Brazilian Institute of Geography and Statistics, IBGE, or Institute for Applied Economic Research, IPEA).
 
 ## Prerequisite:
 To reproduce this you need to follow these steps:
@@ -22,7 +22,6 @@ To reproduce this you need to follow these steps:
 
 ## Acknowledgments
 This project is under construction, so suggestions are welcomed!
-Or, if you want to enjoy me, please, contact me!
 
 ## License
 Please, reference me.
