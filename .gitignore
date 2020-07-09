@@ -1,12 +1,12 @@
-# Ignore this files:
+# Ignore these files:
+code/test.html
+code/old.txt
+code/problem.ipynb
+code/crs_problem.ipynb
+code/module_func_rast.py
 
-D:\\Programming\\Nighttime\\code\\test.html
-D:\\Programming\\Nighttime\\code\\old.txt
-D:\\Programming\\Nighttime\\code\\problem.ipynb
-D:\\Programming\\Nighttime\\code\\crs_problem.ipynb
-D:\\Programming\\Nighttime\\code\\module_func_rast.py
-
-# Ignore this folders:
-D:\\Programming\\Nighttime\\Material\\
-D:\\Programming\\Nighttime\\images\\original\\
-D:\\Programming\\Nighttime\\code\\__pycache__\\
+# Ignore these folders:
+Material/
+images/original/
+code/__pycache__/
+shape/vetor_EstadosBR_LLWGS84/
