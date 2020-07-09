@@ -7,6 +7,6 @@ code/module_func_rast.py
 
 # Ignore these folders:
 Material/
-images/original/
+images/
 code/__pycache__/
 shape/vetor_EstadosBR_LLWGS84/
